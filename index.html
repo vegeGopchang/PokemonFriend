@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포켓몬 크기 비교 사이트</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://kit.fontawesome.com/6f87584c9f.js" crossorigin="anonymous"></script>
+  <style>
+    body { margin: 0; padding: 0; display: flex; height: 100vh; background-color: #e5e5e5; font-family: 'Pretendard', sans-serif; overflow: hidden; }
+
+    /* 네비게이션 탭 (아이콘 추가 & 3번 탭 삭제된 신버전) */
+    .tab-nav { width: 60px; display: flex; flex-direction: column; padding-top: 20px; z-index: 10; background-color: #333; }
+    .tab { width: 100%; height: 60px; cursor: pointer; border: none; margin-bottom: 5px; transition: 0.2s; font-size: 24px; display: flex; justify-content: center; align-items: center; background: transparent; color: #888; }
+    .tab:hover { color: white; background-color: #444; }
+    .tab.active { color: white; background-color: #555; border-left: 4px solid #4CAF50; }
+
+    /* 사이드바 공통 (신버전) */
+    .sidebar { position: absolute; left: 60px; top: 0; bottom: 0; width: 350px; padding: 25px; box-sizing: border-box; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.15); background-color: #f8f9fa; }
+    .sidebar.active { transform: translateX(0); }
+    h3 { margin-top: 0; color: #333; font-size: 18px; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
+
+    /* 메인 화면 및 워크스페이스 */
+    .main-canvas-wrapper { flex-grow: 1; padding: 20px; display: flex; justify-content: flex-end; align-items: center; overflow: hidden; position: relative; z-index: 1; }
+    .workspace { display: flex; flex-direction: column; width: calc(100vw - 450px); height: 100%; position: relative; }
+    .canvas-box { width: 100%; height: 100%; background-color: #ffffff; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+    /* 캔버스 왼쪽 툴바 (사이드바에 가려지는 신버전) */
+    .left-toolbar { position: absolute; left: -70px; top: 82%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 2; transition: opacity 0.2s; }
+    .toolbar-btn { width: 50px; height: 50px; border-radius: 10px; background: white; border: 1px solid #ddd; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; flex-direction: column; color: #333; transition: 0.2s; }
+    .toolbar-btn:hover { background: #f0f0f0; transform: scale(1.05); }
+    .toolbar-btn:active { transform: scale(0.95); }
+    .btn-save { background: #333; color: white; border: none; margin-bottom: 10px; }
+    .btn-save:hover { background: #000; }
+
+    /* 캔버스 우측 상단 툴바 (되돌리기 신버전) */
+    .right-toolbar { position: absolute; right: 20px; top: 20px; display: flex; gap: 10px; z-index: 2; }
+    .undo-btn { width: 45px; height: 45px; border-radius: 8px; background: white; border: 1px solid #ddd; cursor: pointer; font-size: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.2s; }
+    .undo-btn:hover { background: #f0f0f0; }
+
+    /* 통합된 레이어 아이템 슬롯 (신버전) */
+    .poke-slot.empty { background: #e0e0e0; color: #555; justify-content: center; font-weight: bold; border: 2px dashed #aaa; cursor: pointer; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; transition: 0.2s; }
+    .poke-slot.empty:hover { background: #d0d0d0; }
+
+    .layer-item { background: white; border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .layer-item:hover { border-color: #aaa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .layer-item.dragging { opacity: 0.5; }
+    .layer-item.active-layer { border: 2px solid #4CAF50; background: #f0fdf4; }
+
+    .drag-handle { cursor: grab; font-size: 20px; color: #aaa; margin-right: 10px; padding: 0 5px; }
+    .drag-handle:active { cursor: grabbing; }
+    .layer-img { width: 40px; height: 40px; object-fit: contain; margin-right: 10px; background: #f9f9f9; border-radius: 5px; border: 1px solid #eee; }
+    .layer-name { flex-grow: 1; font-weight: bold; font-size: 14px; color: #333; }
+    .remove-btn { background: #ff4d4d; color: white; border: none; border-radius: 5px; width: 28px; height: 28px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .remove-btn:hover { background: #e60000; }
+
+    /* 입력 폼 */
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; }
+    .input-group input[type="text"], .input-group input[type="number"] { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; outline: none; }
+    .input-group input[type="file"] { width: 100%; font-size: 12px; }
+
+    .color-row { display: flex; gap: 5px; align-items: center; }
+    .color-row input[type="color"] { flex-grow: 1; height: 40px; border: none; cursor: pointer; border-radius: 5px; padding: 0; }
+    .apply-btn { padding: 0 15px; height: 40px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+    .apply-btn:hover { background: #45a049; }
+    .reset-btn { width: 100%; padding: 12px; background-color: #ff4d4d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    /* 검색 및 팝업 모달 */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: flex-start; padding-top: 10vh; backdrop-filter: blur(3px); }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: white; width: 600px; padding: 30px; border-radius: 15px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .modal-close { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; font-weight: bold; color: #aaa; transition: 0.2s; }
+    .modal-close:hover { color: #333; }
+    .search-container { position: relative; width: 100%; margin-top: 15px; }
+    .search-bar { width: 100%; padding: 15px; box-sizing: border-box; border-radius: 8px; border: 2px solid #ddd; font-size: 16px; outline: none; transition: 0.2s; }
+    .search-bar:focus { border-color: #4CAF50; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 250px; overflow-y: auto; z-index: 1000; margin: 0; padding: 0; list-style: none; border-radius: 0 0 8px 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; }
+    .autocomplete-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 15px; transition: 0.1s; }
+    .autocomplete-item:hover, .autocomplete-item.active { background: #f0fdf4; font-weight: bold; border-left: 4px solid #4CAF50; padding-left: 11px; }
+
+    /* 구버전 검색 로직용 프리뷰 박스 스타일 복구 */
+    .search-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto; }
+    .result-item { background: white; border-radius: 10px; padding: 10px; display: flex; align-items: center; cursor: pointer; border: 1px solid #ddd; transition: transform 0.1s; }
+    .result-item:hover { transform: scale(1.02); border-color: #aaa; }
+    .result-img { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; }
+    .result-info { flex-grow: 1; }
+    .result-name { font-weight: bold; font-size: 16px; margin-bottom: 4px; }
+    .result-height { font-size: 13px; color: #666; }
+    .loading-text { text-align: center; grid-column: span 2; color: #888; padding: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<nav class="tab-nav">
+  <button class="tab" id="tab-1" onclick="toggleSidebar('sidebar1', this)" title="포켓몬 및 레이어 관리"><i class="fa-solid fa-list"></i></button>
+  <button class="tab" id="tab-2" onclick="toggleSidebar('sidebar2', this)" title="캐릭터 및 배경 설정"><i class="fa-solid fa-gear"></i></button>
+</nav>
+
+<aside id="sidebar1" class="sidebar">
+  <h3>포켓몬 / 레이어 관리</h3>
+  <div class="poke-slot empty" onclick="openModal()">+ 포켓몬 추가하기</div>
+  <p style="font-size:11px; color:#888; margin-bottom:5px;">💡 클릭: 객체 선택 / 우클릭: 좌우 반전 / 드래그: 순서 변경</p>
+  <div id="layer-list"></div>
+</aside>
+
+<aside id="sidebar2" class="sidebar">
+  <h3>캐릭터 설정</h3>
+  <div class="input-group"><label>캐릭터 이름</label><input type="text" id="char-name" placeholder="이름 입력 (예: 내 캐릭터)"></div>
+  <div class="input-group"><label>캐릭터 키 (cm)</label><input type="number" id="char-height" placeholder="예: 180"></div>
+  <div class="input-group"><label>캐릭터 일러스트 업로드</label><input type="file" id="char-upload" accept="image/png, image/jpeg"></div>
+
+  <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+
+  <h3 style="font-size: 16px; margin-bottom: 10px;">✨ 선택된 객체 외곽선</h3>
+  <p style="font-size: 11px; color: #666; margin-top: 0;">포켓몬이나 캐릭터를 먼저 클릭 후 적용하세요.</p>
+  <div class="input-group">
+    <div style="display: flex; gap: 5px; align-items: center;">
+      <input type="color" id="outline-color" value="#ffeb3b" title="외곽선 색상" style="width:40px; height:30px; padding:0; border:1px solid #ccc; border-radius:5px; cursor:pointer;">
+      <input type="range" id="outline-width" min="0" max="40" value="15" title="두께 조절" style="flex-grow:1; cursor:pointer;">
+      <button id="apply-outline-btn" style="padding: 6px 10px; cursor:pointer; background:#4CAF50; color:white; border:none; border-radius:5px; font-weight:bold; font-size:13px;">적용</button>
+    </div>
+  </div>
+
+  <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+
+  <h3 style="font-size: 16px;">배경 설정</h3>
+  <div class="input-group">
+    <label>단색 배경 적용</label>
+    <div class="color-row">
+      <input type="color" id="bg-color-picker" value="#ffffff">
+      <button id="apply-solid-btn" class="apply-btn">적용</button>
+    </div>
+  </div>
+  <div class="input-group">
+    <label>위로 그라데이션 (하단 → 상단)</label>
+    <div class="color-row">
+      <input type="color" id="grad-color-bottom" value="#ffffff" title="하단 시작 색상">
+      <input type="color" id="grad-color-top" value="#87CEEB" title="상단 끝 색상">
+      <button id="apply-grad-btn" class="apply-btn">적용</button>
+    </div>
+  </div>
+  <div class="input-group"><label>배경 일러스트 파일</label><input type="file" id="bg-upload" accept="image/*"></div>
+  <button id="reset-bg-btn" class="reset-btn">↻ 배경 초기화</button>
+</aside>
+
+<main class="main-canvas-wrapper">
+  <div class="workspace">
+    <div class="left-toolbar">
+      <button class="toolbar-btn btn-save" onclick="saveAsPNG()" title="고화질 저장">📥</button>
+      <button class="toolbar-btn" onclick="setZoom(3)" title="3배 확대">3x</button>
+      <button class="toolbar-btn" onclick="setZoom(2)" title="2배 확대">2x</button>
+      <button class="toolbar-btn" onclick="setZoom(1)" title="원래 크기">1x</button>
+    </div>
+
+    <div class="canvas-box" id="canvas-container">
+      <div class="right-toolbar">
+        <button class="undo-btn" onclick="undo()" title="실행 취소 (되돌리기)">↶</button>
+        <button class="undo-btn" onclick="redo()" title="다시 실행 (앞으로 가기)">↷</button>
+      </div>
+      <canvas id="mainCanvas"></canvas>
+    </div>
+  </div>
+</main>
+
+<div id="pokemonModal" class="modal-overlay" onclick="closeModalOnOutsideClick(event)">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">✕</span>
+    <h3 style="border:none; margin:0; font-size:22px;">포켓몬 검색</h3>
+    <div class="search-container">
+      <input type="text" class="search-bar" id="searchInput" placeholder="이름 또는 초성 입력 후 엔터 (예: ㅍ, 피카츄)">
+      <label style="display:inline-block; margin-top:10px; font-size:14px; font-weight:bold; cursor:pointer; color:#555;">
+        <input type="checkbox" id="shiny-toggle" style="cursor:pointer;"> ✨ 이로치(Shiny)로 불러오기
+      </label>
+      <ul id="autocompleteList" class="autocomplete-list"></ul>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="loading-text" id="dictLoadingMsg">사전 데이터를 불러오는 중입니다... 잠시만 기다려주세요.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let canvas;
+  let historyStack = [];
+  let historyIndex = -1;
+  let isRestoring = false;
+
+  window.onload = function() {
+    const container = document.getElementById('canvas-container');
+
+    canvas = new fabric.Canvas('mainCanvas', {
+      width: container.clientWidth,
+      height: container.clientHeight,
+      backgroundColor: '#ffffff',
+      preserveObjectStacking: true
+    });
+
+    canvas.imageSmoothingEnabled = true;
+
+    window.addEventListener('resize', () => {
+      canvas.setWidth(container.clientWidth);
+      canvas.setWidth(container.clientWidth);
+      canvas.setHeight(container.clientHeight);
+      canvas.renderAll();
+    });
+
+    setupLayerDragAndDrop();
+
+    canvas.on('mouse:wheel', function(opt) {
+      var delta = opt.e.deltaY;
+      var zoom = canvas.getZoom();
+      zoom *= 0.999 ** delta;
+      if (zoom > 10) zoom = 10;
+      if (zoom < 0.1) zoom = 0.1;
+      canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+    });
+
+    canvas.on('mouse:down', function(opt) {
+      var evt = opt.e;
+      if (!opt.target || evt.altKey === true) {
+        this.isDragging = true;
+        this.selection = false;
+        this.lastPosX = evt.clientX;
+        this.lastPosY = evt.clientY;
+      }
+      highlightLayer(opt.target);
+    });
+
+    canvas.on('mouse:move', function(opt) {
+      if (this.isDragging) {
+        var e = opt.e;
+        var vpt = this.viewportTransform;
+        vpt[4] += e.clientX - this.lastPosX;
+        vpt[5] += e.clientY - this.lastPosY;
+        this.requestRenderAll();
+        this.lastPosX = e.clientX;
+        this.lastPosY = e.clientY;
+      }
+    });
+
+    canvas.on('mouse:up', function(opt) {
+      this.setViewportTransform(this.viewportTransform);
+      this.isDragging = false;
+      this.selection = true;
+    });
+
+    canvas.on('object:modified', () => saveHistory());
+    saveHistory();
+  };
+
+  // --- 히스토리 시스템 ---
+  function saveHistory() {
+    if (isRestoring) return;
+    // 하드테두리 관련 잔재(outlineMode 등)를 빼고 저장
+    const json = JSON.stringify(canvas.toJSON(['id', 'customName', 'imgUrl']));
+    historyStack = historyStack.slice(0, historyIndex + 1);
+    historyStack.push(json);
+    historyIndex++;
+  }
+
+  function undo() {
+    if (historyIndex > 0) {
+      isRestoring = true;
+      historyIndex--;
+      canvas.loadFromJSON(historyStack[historyIndex], function() {
+        canvas.renderAll();
+        rebuildLayersFromCanvas();
+        isRestoring = false;
+      });
+    }
+  }
+
+  function redo() {
+    if (historyIndex < historyStack.length - 1) {
+      isRestoring = true;
+      historyIndex++;
+      canvas.loadFromJSON(historyStack[historyIndex], function() {
+        canvas.renderAll();
+        rebuildLayersFromCanvas();
+        isRestoring = false;
+      });
+    }
+  }
+
+  // --- 줌 컨트롤러 ---
+  function setZoom(level) {
+    const center = new fabric.Point(canvas.width / 2, canvas.height / 2);
+    canvas.zoomToPoint(center, level);
+  }
+
+  function autoFitObject(objScaledHeight) {
+    const currentZoom = canvas.getZoom();
+    const visibleHeight = canvas.height / currentZoom;
+    if (objScaledHeight > visibleHeight * 0.9) {
+      const newZoom = (canvas.height * 0.9) / objScaledHeight;
+      setZoom(newZoom);
+    }
+  }
+
+  // --- 외곽선 적용 버튼 ---
+  document.getElementById('apply-outline-btn').addEventListener('click', function() {
+    const activeObj = canvas.getActiveObject();
+    if (!activeObj || !activeObj.isType('image')) {
+      alert("외곽선을 적용할 캐릭터나 포켓몬을 먼저 클릭해주세요!");
+      return;
+    }
+    const color = document.getElementById('outline-color').value;
+    const width = parseInt(document.getElementById('outline-width').value, 10);
+
+    if (width === 0) {
+      activeObj.set('shadow', null);
+    } else {
+      activeObj.set('shadow', new fabric.Shadow({ color: color, blur: width, offsetX: 0, offsetY: 0 }));
+    }
+
+    canvas.renderAll();
+    saveHistory();
+  });
+
+
+  document.getElementById('bg-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    fabric.Image.fromURL(objectUrl, function(img) {
+      if(!img) return;
+      const canvasRatio = canvas.width / canvas.height;
+      const imgRatio = img.width / img.height;
+      let scale = canvasRatio > imgRatio ? canvas.width / img.width : canvas.height / img.height;
+      canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+        scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', left: 0, top: 0
+      });
+      saveHistory();
+    });
+    e.target.value = '';
+  });
+
+  document.getElementById('char-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const nameInput = document.getElementById('char-name').value;
+    const displayName = nameInput ? nameInput : '내 캐릭터';
+    const heightInput = document.getElementById('char-height').value;
+    const charHeightCm = heightInput ? parseFloat(heightInput) : 180;
+
+    const targetPixelHeight = charHeightCm * 3.5;
+    const objectUrl = URL.createObjectURL(file);
+    const objId = 'obj_' + Date.now();
+
+    trimTransparentPixels(objectUrl, function(trimmedImgUrl) {
+      fabric.Image.fromURL(trimmedImgUrl, function(img) {
+        if (!img) return;
+        const scale = targetPixelHeight / img.height;
+        img.set({
+          id: objId, customName: displayName, imgUrl: objectUrl,
+          left: (canvas.width / 2) - ((img.width * scale) / 2),
+          top: (canvas.height / 2) - ((img.height * scale) / 2),
+          scaleX: scale, scaleY: scale,
+          transparentCorners: false, cornerColor: '#4CAF50', cornerSize: 10,
+          objectCaching: false
+        });
+
+        canvas.add(img);
+        canvas.setActiveObject(img);
+        autoFitObject(img.height * scale);
+
+        addLayerItemToDOM(displayName, objectUrl, objId);
+        saveHistory();
+      });
+    });
+    e.target.value = '';
+  });
+
+  // --- 배경 컨트롤 ---
+  document.getElementById('apply-solid-btn').addEventListener('click', function() {
+    canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+    canvas.backgroundColor = document.getElementById('bg-color-picker').value;
+    canvas.renderAll();
+    saveHistory();
+  });
+
+  document.getElementById('apply-grad-btn').addEventListener('click', function() {
+    const colorBottom = document.getElementById('grad-color-bottom').value;
+    const colorTop = document.getElementById('grad-color-top').value;
+    const gradient = new fabric.Gradient({
+      type: 'linear', gradientUnits: 'pixels',
+      coords: { x1: 0, y1: canvas.height, x2: 0, y2: 0 },
+      colorStops: [ { offset: 0, color: colorBottom }, { offset: 1, color: colorTop } ]
+    });
+    canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+    canvas.backgroundColor = gradient;
+    canvas.renderAll();
+    saveHistory();
+  });
+
+  document.getElementById('reset-bg-btn').addEventListener('click', function() {
+    canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+    canvas.backgroundColor = '#ffffff';
+    document.getElementById('bg-color-picker').value = '#ffffff';
+    document.getElementById('bg-upload').value = '';
+    canvas.renderAll();
+    saveHistory();
+  });
+
+  // --- UI 토글 및 모달 ---
+  function toggleSidebar(id, tabElement) {
+    const target = document.getElementById(id);
+    const isActive = target.classList.contains('active');
+    document.querySelectorAll('.sidebar').forEach(sb => sb.classList.remove('active'));
+    if (!isActive) target.classList.add('active');
+
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if (!isActive) tabElement.classList.add('active');
+  }
+
+  function openModal() { document.getElementById('pokemonModal').classList.add('active'); document.getElementById('searchInput').focus(); }
+  function closeModal() { document.getElementById('pokemonModal').classList.remove('active'); document.getElementById('searchInput').value = ''; document.getElementById('autocompleteList').style.display = 'none'; document.getElementById('searchResults').innerHTML = ''; }
+  function closeModalOnOutsideClick(event) { if (event.target.classList.contains('modal-overlay')) closeModal(); }
+
+  const CHO_HANGUL = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  function getChoSung(word) { let r=""; for(let i=0;i<word.length;i++){const c=word.charCodeAt(i)-44032; if(c>-1&&c<11172)r+=CHO_HANGUL[Math.floor(c/588)]; else r+=word.charAt(i);} return r; }
+
+  let pokemonDict = [];
+
+  async function initDictionary() {
+    try {
+      const res = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `query {
+            pokemon_v2_pokemon(limit: 15000) { id name is_default pokemon_species_id }
+            pokemon_v2_pokemonspeciesname(where: {language_id: {_eq: 3}}, limit: 2000) { pokemon_species_id name }
+          }`
+        })
+      });
+      const data = await res.json();
+
+      if (!data.data) {
+        document.getElementById('dictLoadingMsg').innerText = "로딩 실패!";
+        return;
+      }
+
+      const speciesNameMap = {};
+      data.data.pokemon_v2_pokemonspeciesname.forEach(s => {
+        speciesNameMap[s.pokemon_species_id] = s.name;
+      });
+
+      data.data.pokemon_v2_pokemon.forEach(p => {
+        const baseName = speciesNameMap[p.pokemon_species_id];
+        if (!baseName) return;
+
+        let krName = baseName;
+        const engName = p.name;
+
+        if (engName.includes('-female') || engName.endsWith('-f')) {
+          krName += ' (암컷)';
+        }
+        // 지역폼 및 기타 폼체인지 처리
+        else if (!p.is_default) {
+          if (engName.includes('-alola')) krName += ' (알로라)';
+          else if (engName.includes('-galar')) krName += ' (가라르)';
+          else if (engName.includes('-hisui')) krName += ' (히스이)';
+          else if (engName.includes('-paldea')) krName += ' (팔데아)';
+          else if (engName.includes('-mega')) krName += ' (메가진화)';
+          else if (engName.includes('-gmax')) krName += ' (거다이맥스)';
+          else if (engName.includes('-east')) krName += ' (동해의 모습)';
+          else if (engName.includes('-blue')) krName += ' (청색근의 모습)';
+          else if (engName.includes('-white')) krName += ' (백색근의 모습)';
+          else if (engName.includes('-unbound')) krName += ' (굴레를 벗어난 모습)';
+          else if (engName.includes('-origin')) krName += ' (오리진폼)';
+          else if (engName.includes('-sky')) krName += ' (스카이폼)';
+          else if (engName.includes('-therian')) krName += ' (영물폼)';
+          else return;
+        }
+
+        pokemonDict.push({
+          id: p.id,
+          name: krName,
+          chosung: getChoSung(krName)
+        });
+      });
+
+      document.getElementById('dictLoadingMsg').style.display = 'none';
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  initDictionary();
+
+  // --- 검색 로직 ---
+  const searchInput = document.getElementById('searchInput');
+  const autocompleteList = document.getElementById('autocompleteList');
+  let currentFocus = -1;
+
+  searchInput.addEventListener('input', (e) => {
+    currentFocus = -1;
+    const query = e.target.value.trim();
+    autocompleteList.innerHTML = '';
+    if (!query) { autocompleteList.style.display = 'none'; return; }
+
+    const isOnlyChosung = /^[ㄱ-ㅎ]+$/.test(query);
+    const matches = pokemonDict.filter(p => isOnlyChosung ? p.chosung.includes(query) : p.name.includes(query)).slice(0, 30);
+
+    if (matches.length > 0) {
+      autocompleteList.style.display = 'block';
+      matches.forEach(match => {
+        const li = document.createElement('li'); li.className = 'autocomplete-item';
+        li.innerHTML = isOnlyChosung ? match.name : match.name.replace(query, `<span style="color:#4CAF50;font-weight:bold;">${query}</span>`);
+
+        li.onclick = () => {
+          searchInput.value = match.name;
+          autocompleteList.style.display = 'none';
+          fetchAndShowPokemon(match.id, match.name);
+        };
+        autocompleteList.appendChild(li);
+      });
+    } else { autocompleteList.style.display = 'none'; }
+  });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.isComposing || e.keyCode === 229) return;
+    let items = autocompleteList.getElementsByTagName('li');
+    if (autocompleteList.style.display === 'none' || items.length === 0) return;
+
+    if (e.key === 'ArrowDown') { e.preventDefault(); currentFocus++; addActive(items); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); currentFocus--; addActive(items); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentFocus > -1 && items[currentFocus]) items[currentFocus].click();
+      else if (items.length > 0) items[0].click();
+    }
+  });
+
+  function addActive(items) { removeActive(items); if (currentFocus >= items.length) currentFocus = 0; if (currentFocus < 0) currentFocus = (items.length - 1); items[currentFocus].classList.add('active'); items[currentFocus].scrollIntoView({ block: 'nearest' }); }
+  function removeActive(items) { for (let i = 0; i < items.length; i++) items[i].classList.remove('active'); }
+
+  // 검색 결과 출력 함수
+  async function fetchAndShowPokemon(id, koreanName) {
+    const searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = '<div class="loading-text">포켓몬 이미지를 불러오는 중입니다...</div>';
+    try {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+      const data = await res.json();
+      const heightCm = data.height * 10;
+      const isShiny = document.getElementById('shiny-toggle').checked;
+
+      let imageUrl = isShiny
+        ? data.sprites.other['official-artwork'].front_shiny
+        : data.sprites.other['official-artwork'].front_default;
+      if (!imageUrl && isShiny) {
+        imageUrl = data.sprites.front_shiny || data.sprites.other['official-artwork'].front_default;
+      }
+
+      const displayName = isShiny ? `✨ ${koreanName}` : koreanName;
+
+      searchResults.innerHTML = `
+        <div class="result-item" onclick="addPokemonToMain('${displayName}', ${heightCm}, '${imageUrl}')">
+            <img src="${imageUrl}" alt="${displayName}" class="result-img" crossorigin="anonymous">
+            <div class="result-info">
+              <div class="result-name" style="color: ${isShiny ? '#d4af37' : '#000'}">${displayName}</div>
+              <div class="result-height">설정 키: ${heightCm}cm</div>
+            </div>
+        </div>
+      `;
+    } catch (error) {
+      searchResults.innerHTML = '<div class="loading-text" style="color:red;">이미지 로드 실패</div>';
+    }
+  }
+
+  function addPokemonToMain(name, heightCm, imgUrl) {
+    closeModal();
+    const objId = 'obj_' + Date.now();
+    const targetPixelHeight = heightCm * 3.5;
+
+    trimTransparentPixels(imgUrl, function(trimmedImgUrl) {
+      fabric.Image.fromURL(trimmedImgUrl, function(img) {
+        if (!img) return;
+        const scale = targetPixelHeight / img.height;
+        img.set({
+          id: objId, customName: name, imgUrl: trimmedImgUrl,
+          left: (canvas.width / 2) - ((img.width * scale) / 2),
+          top: (canvas.height / 2) - ((img.height * scale) / 2),
+          scaleX: scale, scaleY: scale,
+          transparentCorners: false, cornerColor: '#555', cornerSize: 10,
+          objectCaching: false
+        });
+        img.outlineBg = null;
+        img.outlineMode = null;
+
+        canvas.add(img);
+        canvas.setActiveObject(img);
+        autoFitObject(img.height * scale);
+
+        addLayerItemToDOM(name, trimmedImgUrl, objId);
+        saveHistory();
+      }, { crossOrigin: 'anonymous' });
+    });
+  }
+
+  // --- 레이어 관리 및 싱크 제어 ---
+  function addLayerItemToDOM(name, imgUrl, objId) {
+    const list = document.getElementById('layer-list');
+    const item = document.createElement('div');
+    item.className = 'layer-item';
+    item.dataset.id = objId;
+    item.draggable = true;
+
+    item.innerHTML = `
+        <span class="drag-handle">≡</span>
+        <img src="${imgUrl}" class="layer-img">
+        <span class="layer-name">${name}</span>
+        <button class="remove-btn" title="삭제" onclick="event.stopPropagation(); removeObject('${objId}')">✕</button>
+    `;
+
+    list.insertBefore(item, list.firstChild);
+
+    item.addEventListener('click', () => {
+      const obj = canvas.getObjects().find(o => o.id === objId);
+      if(obj) {
+        canvas.setActiveObject(obj);
+        canvas.renderAll();
+        highlightLayer(obj);
+      }
+    });
+
+    item.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const obj = canvas.getObjects().find(o => o.id === objId);
+      if(obj) {
+        obj.set('flipX', !obj.flipX);
+        canvas.renderAll();
+        saveHistory();
+      }
+    });
+
+    addDragEventsToItem(item);
+  }
+
+  function removeObject(objId) {
+    const objToRemove = canvas.getObjects().find(o => o.id === objId);
+    if (objToRemove) {
+      canvas.remove(objToRemove);
+      saveHistory();
+    }
+    const layer = document.querySelector(`.layer-item[data-id="${objId}"]`);
+    if (layer) layer.remove();
+  }
+
+  function syncLayersToCanvas() {
+    const items = [...document.querySelectorAll('#layer-list .layer-item')].reverse();
+    items.forEach((item, index) => {
+      const objId = item.dataset.id;
+      const obj = canvas.getObjects().find(o => o.id === objId);
+      if (obj) {
+        obj.moveTo(index);
+      }
+    });
+    canvas.renderAll();
+  }
+
+  function highlightLayer(activeObj) {
+    document.querySelectorAll('.layer-item').forEach(l => l.classList.remove('active-layer'));
+    if(activeObj && activeObj.id) {
+      const layer = document.querySelector(`.layer-item[data-id="${activeObj.id}"]`);
+      if(layer) layer.classList.add('active-layer');
+    }
+  }
+
+  function rebuildLayersFromCanvas() {
+    const list = document.getElementById('layer-list');
+    list.innerHTML = '';
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      if(obj.id && obj.customName) addLayerItemToDOM(obj.customName, obj.imgUrl, obj.id);
+    });
+  }
+
+  function setupLayerDragAndDrop() {
+    const list = document.getElementById('layer-list');
+    list.addEventListener('dragover', e => {
+      e.preventDefault();
+      const afterElement = getDragAfterElement(list, e.clientY);
+      const draggable = document.querySelector('.dragging');
+      if (draggable) {
+        if (afterElement == null) list.appendChild(draggable);
+        else list.insertBefore(draggable, afterElement);
+      }
+    });
+  }
+
+  function addDragEventsToItem(item) {
+    item.addEventListener('dragstart', () => item.classList.add('dragging'));
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      syncLayersToCanvas();
+      saveHistory();
+    });
+  }
+
+  function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.layer-item:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
+      else return closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  function removeObject(objId) {
+    const objToRemove = canvas.getObjects().find(o => o.id === objId);
+    if (objToRemove) {
+      if (objToRemove.outlineBg) canvas.remove(objToRemove.outlineBg);
+      canvas.remove(objToRemove);
+      saveHistory();
+    }
+    const layer = document.querySelector(`.layer-item[data-id="${objId}"]`);
+    if (layer) layer.remove();
+  }
+
+  function syncLayersToCanvas() {
+    const items = [...document.querySelectorAll('#layer-list .layer-item')].reverse();
+    items.forEach((item, index) => {
+      const objId = item.dataset.id;
+      const obj = canvas.getObjects().find(o => o.id === objId);
+      if (obj) {
+        obj.moveTo(index);
+      }
+    });
+    canvas.renderAll();
+  }
+
+  function saveAsPNG() {
+    canvas.discardActiveObject();
+    canvas.renderAll();
+    const link = document.createElement('a');
+    link.download = '포켓몬_크기비교.png';
+    link.href = canvas.toDataURL({ format: 'png', multiplier: 2 });
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function trimTransparentPixels(imgUrl, callback) {
+    const img = new Image();
+    if (!imgUrl.startsWith('data:') && !imgUrl.startsWith('blob:')) img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = img.width; tempCanvas.height = img.height;
+      const ctx = tempCanvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      try {
+        const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+        const data = imageData.data;
+        let top = null, bottom = null, left = null, right = null;
+        for (let y = 0; y < tempCanvas.height; y++) {
+          for (let x = 0; x < tempCanvas.width; x++) {
+            if (data[(y * tempCanvas.width + x) * 4 + 3] > 0) {
+              if (top === null) top = y;
+              bottom = y;
+              if (left === null || x < left) left = x;
+              if (right === null || x > right) right = x;
+            }
+          }
+        }
+        if (top !== null) {
+          const trimmedWidth = right - left + 1;
+          const trimmedHeight = bottom - top + 1;
+          const trimmedCanvas = document.createElement('canvas');
+          trimmedCanvas.width = trimmedWidth; trimmedCanvas.height = trimmedHeight;
+          trimmedCanvas.getContext('2d').drawImage(
+            tempCanvas, left, top, trimmedWidth, trimmedHeight, 0, 0, trimmedWidth, trimmedHeight
+          );
+          callback(trimmedCanvas.toDataURL('image/png'));
+        } else callback(imgUrl);
+      } catch (e) { callback(imgUrl); }
+    };
+    if (imgUrl.startsWith('http')) img.src = imgUrl + '?v=' + new Date().getTime();
+    else img.src = imgUrl;
+  }
+
+  // --- 키보드 단축키 (Ctrl+Z, Ctrl+Y) 지원 ---
+  window.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault();
+        undo();
+      } else if (e.key === 'y' || e.key === 'Y') {
+        e.preventDefault();
+        redo();
+      }
+    }
+  });
+</script>
+</body>
+</html>
