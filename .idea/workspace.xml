@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="21b727f4-6d06-4482-a7e3-e24632bf5c00" name="변경" comment="업로드" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" show_ignored="true">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="module" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;evamose&quot;
+  }
+}</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="f7870f08-7919-42fb-973a-7bb94c80ac15" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/evamose/PokemonFriend.git&quot;,
+    &quot;accountId&quot;: &quot;53cbcc7f-ae16-4bb7-a765-e3c064d36db1&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="3Dc8v24RPmlvq2fmEc6cjmk7YIh" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript 디버그.index.html.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.138" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.138" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="21b727f4-6d06-4482-a7e3-e24632bf5c00" name="변경" comment="" />
+      <created>1778570226616</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778570226616</updated>
+      <workItem from="1778570230732" duration="2331000" />
+      <workItem from="1778576722040" duration="4084000" />
+      <workItem from="1778591020100" duration="9384000" />
+      <workItem from="1779298566171" duration="894000" />
+      <workItem from="1779413848792" duration="218000" />
+      <workItem from="1779427826227" duration="7743000" />
+      <workItem from="1779539443988" duration="3791000" />
+      <workItem from="1779801649643" duration="1310000" />
+      <workItem from="1779804467606" duration="2203000" />
+      <workItem from="1779875829650" duration="1728000" />
+    </task>
+    <task id="LOCAL-00001" summary="첫 푸시">
+      <option name="closed" value="true" />
+      <created>1778597846553</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778597846553</updated>
+    </task>
+    <task id="LOCAL-00002" summary="캐릭터 전신추가">
+      <option name="closed" value="true" />
+      <created>1778600316724</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1778600316724</updated>
+    </task>
+    <task id="LOCAL-00003" summary="캐릭터 전신 추가. 검색 효율기능">
+      <option name="closed" value="true" />
+      <created>1778602482472</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1778602482472</updated>
+    </task>
+    <task id="LOCAL-00004" summary="캐릭터 전신 추가진짜">
+      <option name="closed" value="true" />
+      <created>1778602749877</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1778602749877</updated>
+    </task>
+    <task id="LOCAL-00005" summary="디버깅 메세지">
+      <option name="closed" value="true" />
+      <created>1778603261655</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1778603261655</updated>
+    </task>
+    <task id="LOCAL-00006" summary="디버깅 메세지">
+      <option name="closed" value="true" />
+      <created>1778603608095</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1778603608095</updated>
+    </task>
+    <task id="LOCAL-00007" summary="디버깅 1차시도">
+      <option name="closed" value="true" />
+      <created>1778603806329</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1778603806329</updated>
+    </task>
+    <task id="LOCAL-00008" summary="2차 수정">
+      <option name="closed" value="true" />
+      <created>1779436491695</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1779436491695</updated>
+    </task>
+    <task id="LOCAL-00009" summary="3차 수정">
+      <option name="closed" value="true" />
+      <created>1779437118241</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1779437118241</updated>
+    </task>
+    <task id="LOCAL-00010" summary="최종 수정">
+      <option name="closed" value="true" />
+      <created>1779544544231</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1779544544232</updated>
+    </task>
+    <task id="LOCAL-00011" summary="진짜 최종 수정">
+      <option name="closed" value="true" />
+      <created>1779803875558</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1779803875558</updated>
+    </task>
+    <task id="LOCAL-00012" summary="진짜 진짜 진짜 최종 수정">
+      <option name="closed" value="true" />
+      <created>1779806674839</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1779806674839</updated>
+    </task>
+    <task id="LOCAL-00013" summary="h">
+      <option name="closed" value="true" />
+      <created>1779876747081</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1779876747081</updated>
+    </task>
+    <task id="LOCAL-00014" summary="업로드">
+      <option name="closed" value="true" />
+      <created>1779877346438</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1779877346438</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="첫 푸시" />
+    <MESSAGE value="캐릭터 전신추가" />
+    <MESSAGE value="캐릭터 전신 추가. 검색 효율기능" />
+    <MESSAGE value="캐릭터 전신 추가진짜" />
+    <MESSAGE value="디버깅 메세지" />
+    <MESSAGE value="디버깅 1차시도" />
+    <MESSAGE value="2차 수정" />
+    <MESSAGE value="3차 수정" />
+    <MESSAGE value="최종 수정" />
+    <MESSAGE value="진짜 최종 수정" />
+    <MESSAGE value="진짜 진짜 진짜 최종 수정" />
+    <MESSAGE value="h" />
+    <MESSAGE value="업로드" />
+    <option name="LAST_COMMIT_MESSAGE" value="업로드" />
+  </component>
+</project>
