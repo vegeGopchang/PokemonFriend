@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>포켓몬 크기 비교 사이트</title>
+  <title>Pokemon Size Comparison</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://kit.fontawesome.com/6f87584c9f.js" crossorigin="anonymous"></script>
   <style>
@@ -14,6 +14,8 @@
     .tab { width: 100%; height: 60px; cursor: pointer; border: none; margin-bottom: 5px; transition: 0.2s; font-size: 24px; display: flex; justify-content: center; align-items: center; background: transparent; color: #888; }
     .tab:hover { color: white; background-color: #444; }
     .tab.active { color: white; background-color: #555; border-left: 4px solid #4CAF50; }
+    .language-switcher { margin-top: auto; padding: 0 6px 16px; }
+    .language-select { width: 48px; height: 34px; border: 1px solid #555; border-radius: 8px; background: #222; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; outline: none; }
 
     /* 사이드바 공통 (신버전) */
     .sidebar { position: absolute; left: 60px; top: 0; bottom: 0; width: 350px; padding: 25px; box-sizing: border-box; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5; overflow-y: auto; box-shadow: 4px 0 15px rgba(0,0,0,0.15); background-color: #f8f9fa; }
@@ -159,70 +161,77 @@
 </header>
 
 <nav class="tab-nav">
-  <button class="tab" id="tab-1" onclick="toggleSidebar('sidebar1', this)" title="포켓몬 및 레이어 관리"><i class="fa-solid fa-list"></i></button>
-  <button class="tab" id="tab-2" onclick="toggleSidebar('sidebar2', this)" title="캐릭터 및 배경 설정"><i class="fa-solid fa-gear"></i></button>
+  <button class="tab" id="tab-1" onclick="toggleSidebar('sidebar1', this)" title="포켓몬 및 레이어 관리" data-i18n-title="tabLayers"><i class="fa-solid fa-list"></i></button>
+  <button class="tab" id="tab-2" onclick="toggleSidebar('sidebar2', this)" title="캐릭터 및 배경 설정" data-i18n-title="tabSettings"><i class="fa-solid fa-gear"></i></button>
+  <div class="language-switcher">
+    <select id="language-select" class="language-select" title="Language" data-i18n-title="languageSelectTitle">
+      <option value="ko">KO</option>
+      <option value="en">EN</option>
+      <option value="zh">中</option>
+    </select>
+  </div>
 </nav>
 
 <aside id="sidebar1" class="sidebar">
-  <h3>포켓몬 / 레이어 관리</h3>
-  <div class="poke-slot empty" onclick="openModal()">+ 포켓몬 추가하기</div>
-  <p style="font-size:11px; color:#888; margin-bottom:5px;">💡 클릭: 객체 선택 / 우클릭: 좌우 반전 / 드래그: 순서 변경</p>
+  <h3 data-i18n="layersHeading">포켓몬 / 레이어 관리</h3>
+  <div class="poke-slot empty" onclick="openModal()" data-i18n="addPokemon">+ 포켓몬 추가하기</div>
+  <p style="font-size:11px; color:#888; margin-bottom:5px;" data-i18n="layerHint">💡 클릭: 객체 선택 / 우클릭: 좌우 반전 / 드래그: 순서 변경</p>
   <div id="layer-list"></div>
 </aside>
 
 <aside id="sidebar2" class="sidebar">
-  <h3>캐릭터 설정</h3>
-  <div class="input-group"><label>캐릭터 이름</label><input type="text" id="char-name" placeholder="이름 입력 (예: 내 캐릭터)"></div>
-  <div class="input-group"><label>캐릭터 키 (cm)</label><input type="number" id="char-height" placeholder="예: 180"></div>
-  <div class="input-group"><label>캐릭터 일러스트 업로드</label><input type="file" id="char-upload" accept="image/png, image/jpeg"></div>
+  <h3 data-i18n="characterHeading">캐릭터 설정</h3>
+  <div class="input-group"><label data-i18n="characterName">캐릭터 이름</label><input type="text" id="char-name" placeholder="이름 입력 (예: 내 캐릭터)" data-i18n-placeholder="characterNamePlaceholder"></div>
+  <div class="input-group"><label data-i18n="characterHeight">캐릭터 키 (cm)</label><input type="number" id="char-height" placeholder="예: 180" data-i18n-placeholder="characterHeightPlaceholder"></div>
+  <div class="input-group"><label data-i18n="characterUpload">캐릭터 일러스트 업로드</label><input type="file" id="char-upload" accept="image/png, image/jpeg"></div>
 
   <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
 
-  <h3 style="font-size: 16px; margin-bottom: 10px;">✨ 선택된 객체 외곽선</h3>
-  <p style="font-size: 11px; color: #666; margin-top: 0;">포켓몬이나 캐릭터를 먼저 클릭 후 적용하세요.</p>
+  <h3 style="font-size: 16px; margin-bottom: 10px;" data-i18n="outlineHeading">✨ 선택된 객체 외곽선</h3>
+  <p style="font-size: 11px; color: #666; margin-top: 0;" data-i18n="outlineHint">포켓몬이나 캐릭터를 먼저 클릭 후 적용하세요.</p>
   <div class="input-group">
     <div style="display: flex; gap: 5px; align-items: center;">
-      <input type="color" id="outline-color" value="#ffeb3b" title="외곽선 색상" style="width:40px; height:30px; padding:0; border:1px solid #ccc; border-radius:5px; cursor:pointer;">
-      <input type="range" id="outline-width" min="0" max="40" value="15" title="두께 조절" style="flex-grow:1; cursor:pointer;">
-      <button id="apply-outline-btn" style="padding: 6px 10px; cursor:pointer; background:#4CAF50; color:white; border:none; border-radius:5px; font-weight:bold; font-size:13px;">적용</button>
+      <input type="color" id="outline-color" value="#ffeb3b" title="외곽선 색상" data-i18n-title="outlineColorTitle" style="width:40px; height:30px; padding:0; border:1px solid #ccc; border-radius:5px; cursor:pointer;">
+      <input type="range" id="outline-width" min="0" max="40" value="15" title="두께 조절" data-i18n-title="outlineWidthTitle" style="flex-grow:1; cursor:pointer;">
+      <button id="apply-outline-btn" style="padding: 6px 10px; cursor:pointer; background:#4CAF50; color:white; border:none; border-radius:5px; font-weight:bold; font-size:13px;" data-i18n="apply">적용</button>
     </div>
   </div>
 
   <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
 
-  <h3 style="font-size: 16px;">배경 설정</h3>
+  <h3 style="font-size: 16px;" data-i18n="backgroundHeading">배경 설정</h3>
   <div class="input-group">
-    <label>단색 배경 적용</label>
+    <label data-i18n="solidBackground">단색 배경 적용</label>
     <div class="color-row">
       <input type="color" id="bg-color-picker" value="#ffffff">
-      <button id="apply-solid-btn" class="apply-btn">적용</button>
+      <button id="apply-solid-btn" class="apply-btn" data-i18n="apply">적용</button>
     </div>
   </div>
   <div class="input-group">
-    <label>위로 그라데이션 (하단 → 상단)</label>
+    <label data-i18n="gradientBackground">위로 그라데이션 (하단 → 상단)</label>
     <div class="color-row">
-      <input type="color" id="grad-color-bottom" value="#ffffff" title="하단 시작 색상">
-      <input type="color" id="grad-color-top" value="#87CEEB" title="상단 끝 색상">
-      <button id="apply-grad-btn" class="apply-btn">적용</button>
+      <input type="color" id="grad-color-bottom" value="#ffffff" title="하단 시작 색상" data-i18n-title="gradientBottomTitle">
+      <input type="color" id="grad-color-top" value="#87CEEB" title="상단 끝 색상" data-i18n-title="gradientTopTitle">
+      <button id="apply-grad-btn" class="apply-btn" data-i18n="apply">적용</button>
     </div>
   </div>
-  <div class="input-group"><label>배경 일러스트 파일</label><input type="file" id="bg-upload" accept="image/*"></div>
-  <button id="reset-bg-btn" class="reset-btn">↻ 배경 초기화</button>
+  <div class="input-group"><label data-i18n="backgroundUpload">배경 일러스트 파일</label><input type="file" id="bg-upload" accept="image/*"></div>
+  <button id="reset-bg-btn" class="reset-btn" data-i18n="resetBackground">↻ 배경 초기화</button>
 </aside>
 
 <main class="main-canvas-wrapper">
   <div class="workspace">
     <div class="left-toolbar">
-      <button class="toolbar-btn btn-save" onclick="saveAsPNG()" title="고화질 저장">📥</button>
-      <button class="toolbar-btn" onclick="setZoom(3)" title="3배 확대">3x</button>
-      <button class="toolbar-btn" onclick="setZoom(2)" title="2배 확대">2x</button>
-      <button class="toolbar-btn" onclick="setZoom(1)" title="원래 크기">1x</button>
+      <button class="toolbar-btn btn-save" onclick="saveAsPNG()" title="고화질 저장" data-i18n-title="saveTitle">📥</button>
+      <button class="toolbar-btn" onclick="setZoom(3)" title="3배 확대" data-i18n-title="zoom3Title">3x</button>
+      <button class="toolbar-btn" onclick="setZoom(2)" title="2배 확대" data-i18n-title="zoom2Title">2x</button>
+      <button class="toolbar-btn" onclick="setZoom(1)" title="원래 크기" data-i18n-title="zoom1Title">1x</button>
     </div>
 
     <div class="canvas-box" id="canvas-container">
       <div class="right-toolbar">
-        <button class="undo-btn" onclick="undo()" title="실행 취소 (되돌리기)">↶</button>
-        <button class="undo-btn" onclick="redo()" title="다시 실행 (앞으로 가기)">↷</button>
+        <button class="undo-btn" onclick="undo()" title="실행 취소 (되돌리기)" data-i18n-title="undoTitle">↶</button>
+        <button class="undo-btn" onclick="redo()" title="다시 실행 (앞으로 가기)" data-i18n-title="redoTitle">↷</button>
       </div>
       <canvas id="mainCanvas"></canvas>
     </div>
@@ -232,16 +241,16 @@
 <div id="pokemonModal" class="modal-overlay" onclick="closeModalOnOutsideClick(event)">
   <div class="modal-content">
     <span class="modal-close" onclick="closeModal()">✕</span>
-    <h3 style="border:none; margin:0; font-size:22px;">포켓몬 검색</h3>
+    <h3 style="border:none; margin:0; font-size:22px;" data-i18n="searchHeading">포켓몬 검색</h3>
     <div class="search-container">
-      <input type="text" class="search-bar" id="searchInput" placeholder="이름 또는 초성 입력 후 엔터 (예: ㅍ, 피카츄)">
+      <input type="text" class="search-bar" id="searchInput" placeholder="이름 또는 초성 입력 후 엔터 (예: ㅍ, 피카츄)" data-i18n-placeholder="searchPlaceholder">
       <label style="display:inline-block; margin-top:10px; font-size:14px; font-weight:bold; cursor:pointer; color:#555;">
-        <input type="checkbox" id="shiny-toggle" style="cursor:pointer;"> ✨ 이로치(Shiny)로 불러오기
+        <input type="checkbox" id="shiny-toggle" style="cursor:pointer;"> <span data-i18n="shinyLabel">✨ 이로치(Shiny)로 불러오기</span>
       </label>
       <ul id="autocompleteList" class="autocomplete-list"></ul>
     </div>
     <div class="search-results" id="searchResults">
-      <div class="loading-text" id="dictLoadingMsg">사전 데이터를 불러오는 중입니다... 잠시만 기다려주세요.</div>
+      <div class="loading-text" id="dictLoadingMsg" data-i18n="dictionaryLoading">사전 데이터를 불러오는 중입니다... 잠시만 기다려주세요.</div>
     </div>
   </div>
 </div>
@@ -251,6 +260,284 @@
   let historyStack = [];
   let historyIndex = -1;
   let isRestoring = false;
+  const LANGUAGE_STORAGE_KEY = 'pokemonFriendLanguage';
+  const POKEAPI_LANGUAGE_IDS = { ko: 3, en: 9, zh: 12 };
+  const LANGUAGES = {
+    ko: {
+      htmlLang: 'ko',
+      title: '포켓몬 크기 비교 사이트',
+      tabLayers: '포켓몬 및 레이어 관리',
+      tabSettings: '캐릭터 및 배경 설정',
+      languageSelectTitle: '언어 선택',
+      layersHeading: '포켓몬 / 레이어 관리',
+      addPokemon: '+ 포켓몬 추가하기',
+      layerHint: '💡 클릭: 객체 선택 / 우클릭: 좌우 반전 / 드래그: 순서 변경',
+      characterHeading: '캐릭터 설정',
+      characterName: '캐릭터 이름',
+      characterNamePlaceholder: '이름 입력 (예: 내 캐릭터)',
+      characterHeight: '캐릭터 키 (cm)',
+      characterHeightPlaceholder: '예: 180',
+      characterUpload: '캐릭터 일러스트 업로드',
+      outlineHeading: '✨ 선택된 객체 외곽선',
+      outlineHint: '포켓몬이나 캐릭터를 먼저 클릭 후 적용하세요.',
+      outlineColorTitle: '외곽선 색상',
+      outlineWidthTitle: '두께 조절',
+      apply: '적용',
+      backgroundHeading: '배경 설정',
+      solidBackground: '단색 배경 적용',
+      gradientBackground: '위로 그라데이션 (하단 → 상단)',
+      gradientBottomTitle: '하단 시작 색상',
+      gradientTopTitle: '상단 끝 색상',
+      backgroundUpload: '배경 일러스트 파일',
+      resetBackground: '↻ 배경 초기화',
+      saveTitle: '고화질 저장',
+      zoom3Title: '3배 확대',
+      zoom2Title: '2배 확대',
+      zoom1Title: '원래 크기',
+      undoTitle: '실행 취소 (되돌리기)',
+      redoTitle: '다시 실행 (앞으로 가기)',
+      searchHeading: '포켓몬 검색',
+      searchPlaceholder: '이름 또는 초성 입력 후 엔터 (예: ㅍ, 피카츄)',
+      shinyLabel: '✨ 이로치(Shiny)로 불러오기',
+      dictionaryLoading: '사전 데이터를 불러오는 중입니다... 잠시만 기다려주세요.',
+      dictionaryFailed: '로딩 실패!',
+      pokemonImageLoading: '포켓몬 이미지를 불러오는 중입니다...',
+      imageLoadFailed: '이미지 로드 실패',
+      resultHeight: '설정 키: {height}cm',
+      removeTitle: '삭제',
+      defaultCharacterName: '내 캐릭터',
+      outlineAlert: '외곽선을 적용할 캐릭터나 포켓몬을 먼저 클릭해주세요!',
+      downloadFilename: '포켓몬_크기비교.png',
+      forms: {
+        female: ' (암컷)',
+        alola: ' (알로라)',
+        galar: ' (가라르)',
+        hisui: ' (히스이)',
+        paldea: ' (팔데아)',
+        mega: ' (메가진화)',
+        gmax: ' (거다이맥스)',
+        east: ' (동해의 모습)',
+        blue: ' (청색근의 모습)',
+        white: ' (백색근의 모습)',
+        unbound: ' (굴레를 벗어난 모습)',
+        origin: ' (오리진폼)',
+        sky: ' (스카이폼)',
+        therian: ' (영물폼)'
+      }
+    },
+    en: {
+      htmlLang: 'en',
+      title: 'Pokemon Size Comparison',
+      tabLayers: 'Pokemon and layer manager',
+      tabSettings: 'Character and background settings',
+      languageSelectTitle: 'Select language',
+      layersHeading: 'Pokemon / Layer Manager',
+      addPokemon: '+ Add Pokemon',
+      layerHint: 'Tip: click to select / right-click to flip / drag to reorder',
+      characterHeading: 'Character Settings',
+      characterName: 'Character Name',
+      characterNamePlaceholder: 'Enter a name (e.g. My Character)',
+      characterHeight: 'Character Height (cm)',
+      characterHeightPlaceholder: 'e.g. 180',
+      characterUpload: 'Upload Character Illustration',
+      outlineHeading: '✨ Selected Object Outline',
+      outlineHint: 'Select a Pokemon or character first, then apply the outline.',
+      outlineColorTitle: 'Outline color',
+      outlineWidthTitle: 'Outline width',
+      apply: 'Apply',
+      backgroundHeading: 'Background Settings',
+      solidBackground: 'Apply Solid Background',
+      gradientBackground: 'Gradient Upward (bottom → top)',
+      gradientBottomTitle: 'Bottom color',
+      gradientTopTitle: 'Top color',
+      backgroundUpload: 'Background Image File',
+      resetBackground: '↻ Reset Background',
+      saveTitle: 'Save high-resolution image',
+      zoom3Title: 'Zoom to 3x',
+      zoom2Title: 'Zoom to 2x',
+      zoom1Title: 'Original size',
+      undoTitle: 'Undo',
+      redoTitle: 'Redo',
+      searchHeading: 'Pokemon Search',
+      searchPlaceholder: 'Type a name and press Enter (e.g. Pikachu)',
+      shinyLabel: '✨ Load as Shiny',
+      dictionaryLoading: 'Loading dictionary data... Please wait.',
+      dictionaryFailed: 'Loading failed!',
+      pokemonImageLoading: 'Loading Pokemon image...',
+      imageLoadFailed: 'Image load failed',
+      resultHeight: 'Height: {height}cm',
+      removeTitle: 'Delete',
+      defaultCharacterName: 'My Character',
+      outlineAlert: 'Please select a character or Pokemon before applying an outline.',
+      downloadFilename: 'pokemon_size_comparison.png',
+      forms: {
+        female: ' (Female)',
+        alola: ' (Alola)',
+        galar: ' (Galar)',
+        hisui: ' (Hisui)',
+        paldea: ' (Paldea)',
+        mega: ' (Mega Evolution)',
+        gmax: ' (Gigantamax)',
+        east: ' (East Sea Form)',
+        blue: ' (Blue-Striped Form)',
+        white: ' (White-Striped Form)',
+        unbound: ' (Unbound Form)',
+        origin: ' (Origin Form)',
+        sky: ' (Sky Form)',
+        therian: ' (Therian Form)'
+      }
+    },
+    zh: {
+      htmlLang: 'zh-Hans',
+      title: '宝可梦尺寸对比工具',
+      tabLayers: '宝可梦与图层管理',
+      tabSettings: '角色与背景设置',
+      languageSelectTitle: '选择语言',
+      layersHeading: '宝可梦 / 图层管理',
+      addPokemon: '+ 添加宝可梦',
+      layerHint: '提示：点击选择 / 右键水平翻转 / 拖拽调整顺序',
+      characterHeading: '角色设置',
+      characterName: '角色名称',
+      characterNamePlaceholder: '输入名称（例如：我的角色）',
+      characterHeight: '角色身高（cm）',
+      characterHeightPlaceholder: '例如：180',
+      characterUpload: '上传角色立绘',
+      outlineHeading: '✨ 选中对象描边',
+      outlineHint: '请先点击选中宝可梦或角色，再应用描边。',
+      outlineColorTitle: '描边颜色',
+      outlineWidthTitle: '描边粗细',
+      apply: '应用',
+      backgroundHeading: '背景设置',
+      solidBackground: '应用纯色背景',
+      gradientBackground: '向上渐变（下 → 上）',
+      gradientBottomTitle: '底部起始颜色',
+      gradientTopTitle: '顶部结束颜色',
+      backgroundUpload: '背景图片文件',
+      resetBackground: '↻ 重置背景',
+      saveTitle: '保存高清图片',
+      zoom3Title: '放大 3 倍',
+      zoom2Title: '放大 2 倍',
+      zoom1Title: '原始大小',
+      undoTitle: '撤销',
+      redoTitle: '重做',
+      searchHeading: '搜索宝可梦',
+      searchPlaceholder: '输入中文名或英文名后按回车（例如：皮卡丘 / pikachu）',
+      shinyLabel: '✨ 载入异色（Shiny）形态',
+      dictionaryLoading: '正在加载词典数据……请稍候。',
+      dictionaryFailed: '加载失败！',
+      pokemonImageLoading: '正在加载宝可梦图片……',
+      imageLoadFailed: '图片加载失败',
+      resultHeight: '设定身高：{height}cm',
+      removeTitle: '删除',
+      defaultCharacterName: '我的角色',
+      outlineAlert: '请先点击要应用描边的角色或宝可梦！',
+      downloadFilename: '宝可梦_尺寸对比.png',
+      forms: {
+        female: '（雌性）',
+        alola: '（阿罗拉）',
+        galar: '（伽勒尔）',
+        hisui: '（洗翠）',
+        paldea: '（帕底亚）',
+        mega: '（超级进化）',
+        gmax: '（超极巨化）',
+        east: '（东海形态）',
+        blue: '（蓝条纹形态）',
+        white: '（白条纹形态）',
+        unbound: '（解放形态）',
+        origin: '（起源形态）',
+        sky: '（天空形态）',
+        therian: '（灵兽形态）'
+      }
+    }
+  };
+  let currentLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'ko';
+  if (!LANGUAGES[currentLanguage]) currentLanguage = 'ko';
+
+  function t(key, params = {}) {
+    const value = LANGUAGES[currentLanguage][key] || LANGUAGES.ko[key] || key;
+    return Object.keys(params).reduce((text, name) => text.replace(`{${name}}`, params[name]), value);
+  }
+
+  function applyPageLanguage() {
+    const language = LANGUAGES[currentLanguage];
+    document.documentElement.lang = language.htmlLang;
+    document.title = language.title;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+    });
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.title = t('removeTitle');
+    });
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) languageSelect.value = currentLanguage;
+  }
+
+  function formatPokemonBaseName(name) {
+    if (currentLanguage !== 'en') return name;
+    return name
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, letter => letter.toUpperCase());
+  }
+
+  function getPokemonFormSuffix(englishName, isDefault) {
+    const forms = LANGUAGES[currentLanguage].forms;
+    if (englishName.includes('-female') || englishName.endsWith('-f')) return forms.female;
+    if (isDefault) return '';
+    if (englishName.includes('-alola')) return forms.alola;
+    if (englishName.includes('-galar')) return forms.galar;
+    if (englishName.includes('-hisui')) return forms.hisui;
+    if (englishName.includes('-paldea')) return forms.paldea;
+    if (englishName.includes('-mega')) return forms.mega;
+    if (englishName.includes('-gmax')) return forms.gmax;
+    if (englishName.includes('-east')) return forms.east;
+    if (englishName.includes('-blue')) return forms.blue;
+    if (englishName.includes('-white')) return forms.white;
+    if (englishName.includes('-unbound')) return forms.unbound;
+    if (englishName.includes('-origin')) return forms.origin;
+    if (englishName.includes('-sky')) return forms.sky;
+    if (englishName.includes('-therian')) return forms.therian;
+    return null;
+  }
+
+  function highlightMatch(name, query) {
+    const lowerName = name.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    const index = lowerName.indexOf(lowerQuery);
+    if (index < 0) return name;
+    const before = name.slice(0, index);
+    const match = name.slice(index, index + query.length);
+    const after = name.slice(index + query.length);
+    return `${before}<span style="color:#4CAF50;font-weight:bold;">${match}</span>${after}`;
+  }
+
+  function getPokemonSearchTerms(displayName, englishName) {
+    const terms = [displayName.toLowerCase(), englishName.toLowerCase()];
+    if (currentLanguage === 'ko') terms.push(getChoSung(displayName));
+    return terms;
+  }
+
+  function setSearchResultsMessage(message, isError = false) {
+    const searchResults = document.getElementById('searchResults');
+    if (!searchResults) return;
+    const errorStyle = isError ? ' style="color:red;"' : '';
+    searchResults.innerHTML = `<div class="loading-text" id="dictLoadingMsg"${errorStyle}>${message}</div>`;
+  }
+
+  applyPageLanguage();
+
+  document.getElementById('language-select').addEventListener('change', function(e) {
+    currentLanguage = e.target.value;
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
+    applyPageLanguage();
+    closeModal();
+    initDictionary();
+  });
 
   window.onload = function() {
     const container = document.getElementById('canvas-container');
@@ -370,7 +657,7 @@
   document.getElementById('apply-outline-btn').addEventListener('click', function() {
     const activeObj = canvas.getActiveObject();
     if (!activeObj || !activeObj.isType('image')) {
-      alert("외곽선을 적용할 캐릭터나 포켓몬을 먼저 클릭해주세요!");
+      alert(t('outlineAlert'));
       return;
     }
     const color = document.getElementById('outline-color').value;
@@ -409,7 +696,7 @@
     if (!file) return;
 
     const nameInput = document.getElementById('char-name').value;
-    const displayName = nameInput ? nameInput : '내 캐릭터';
+    const displayName = nameInput ? nameInput : t('defaultCharacterName');
     const heightInput = document.getElementById('char-height').value;
     const charHeightCm = heightInput ? parseFloat(heightInput) : 180;
 
@@ -493,6 +780,11 @@
   let pokemonDict = [];
 
   async function initDictionary() {
+    const requestLanguage = currentLanguage;
+    const languageId = POKEAPI_LANGUAGE_IDS[requestLanguage] || POKEAPI_LANGUAGE_IDS.ko;
+    pokemonDict = [];
+    setSearchResultsMessage(t('dictionaryLoading'));
+
     try {
       const res = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
         method: 'POST',
@@ -500,14 +792,15 @@
         body: JSON.stringify({
           query: `query {
             pokemon_v2_pokemon(limit: 15000) { id name is_default pokemon_species_id }
-            pokemon_v2_pokemonspeciesname(where: {language_id: {_eq: 3}}, limit: 2000) { pokemon_species_id name }
+            pokemon_v2_pokemonspeciesname(where: {language_id: {_eq: ${languageId}}}, limit: 2000) { pokemon_species_id name }
           }`
         })
       });
       const data = await res.json();
+      if (requestLanguage !== currentLanguage) return;
 
       if (!data.data) {
-        document.getElementById('dictLoadingMsg').innerText = "로딩 실패!";
+        document.getElementById('dictLoadingMsg').innerText = t('dictionaryFailed');
         return;
       }
 
@@ -517,43 +810,23 @@
       });
 
       data.data.pokemon_v2_pokemon.forEach(p => {
-        const baseName = speciesNameMap[p.pokemon_species_id];
-        if (!baseName) return;
-
-        let krName = baseName;
+        const baseName = speciesNameMap[p.pokemon_species_id] || p.name;
         const engName = p.name;
-
-        if (engName.includes('-female') || engName.endsWith('-f')) {
-          krName += ' (암컷)';
-        }
-        // 지역폼 및 기타 폼체인지 처리
-        else if (!p.is_default) {
-          if (engName.includes('-alola')) krName += ' (알로라)';
-          else if (engName.includes('-galar')) krName += ' (가라르)';
-          else if (engName.includes('-hisui')) krName += ' (히스이)';
-          else if (engName.includes('-paldea')) krName += ' (팔데아)';
-          else if (engName.includes('-mega')) krName += ' (메가진화)';
-          else if (engName.includes('-gmax')) krName += ' (거다이맥스)';
-          else if (engName.includes('-east')) krName += ' (동해의 모습)';
-          else if (engName.includes('-blue')) krName += ' (청색근의 모습)';
-          else if (engName.includes('-white')) krName += ' (백색근의 모습)';
-          else if (engName.includes('-unbound')) krName += ' (굴레를 벗어난 모습)';
-          else if (engName.includes('-origin')) krName += ' (오리진폼)';
-          else if (engName.includes('-sky')) krName += ' (스카이폼)';
-          else if (engName.includes('-therian')) krName += ' (영물폼)';
-          else return;
-        }
+        const formSuffix = getPokemonFormSuffix(engName, p.is_default);
+        if (formSuffix === null) return;
+        const displayName = `${formatPokemonBaseName(baseName)}${formSuffix}`;
 
         pokemonDict.push({
           id: p.id,
-          name: krName,
-          chosung: getChoSung(krName)
+          name: displayName,
+          searchTerms: getPokemonSearchTerms(displayName, engName)
         });
       });
 
       document.getElementById('dictLoadingMsg').style.display = 'none';
     } catch (error) {
       console.error(error);
+      setSearchResultsMessage(t('dictionaryFailed'), true);
     }
   }
   initDictionary();
@@ -569,14 +842,15 @@
     autocompleteList.innerHTML = '';
     if (!query) { autocompleteList.style.display = 'none'; return; }
 
-    const isOnlyChosung = /^[ㄱ-ㅎ]+$/.test(query);
-    const matches = pokemonDict.filter(p => isOnlyChosung ? p.chosung.includes(query) : p.name.includes(query)).slice(0, 30);
+    const isOnlyChosung = currentLanguage === 'ko' && /^[ㄱ-ㅎ]+$/.test(query);
+    const normalizedQuery = isOnlyChosung ? query : query.toLowerCase();
+    const matches = pokemonDict.filter(p => p.searchTerms.some(term => term.includes(normalizedQuery))).slice(0, 30);
 
     if (matches.length > 0) {
       autocompleteList.style.display = 'block';
       matches.forEach(match => {
         const li = document.createElement('li'); li.className = 'autocomplete-item';
-        li.innerHTML = isOnlyChosung ? match.name : match.name.replace(query, `<span style="color:#4CAF50;font-weight:bold;">${query}</span>`);
+        li.innerHTML = isOnlyChosung ? match.name : highlightMatch(match.name, query);
 
         li.onclick = () => {
           searchInput.value = match.name;
@@ -606,9 +880,9 @@
   function removeActive(items) { for (let i = 0; i < items.length; i++) items[i].classList.remove('active'); }
 
   // 검색 결과 출력 함수
-  async function fetchAndShowPokemon(id, koreanName) {
+  async function fetchAndShowPokemon(id, pokemonName) {
     const searchResults = document.getElementById('searchResults');
-    searchResults.innerHTML = '<div class="loading-text">포켓몬 이미지를 불러오는 중입니다...</div>';
+    searchResults.innerHTML = `<div class="loading-text">${t('pokemonImageLoading')}</div>`;
     try {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
       const data = await res.json();
@@ -622,19 +896,22 @@
         imageUrl = data.sprites.front_shiny || data.sprites.other['official-artwork'].front_default;
       }
 
-      const displayName = isShiny ? `✨ ${koreanName}` : koreanName;
+      const displayName = isShiny ? `✨ ${pokemonName}` : pokemonName;
 
       searchResults.innerHTML = `
-        <div class="result-item" onclick="addPokemonToMain('${displayName}', ${heightCm}, '${imageUrl}')">
+        <div class="result-item">
             <img src="${imageUrl}" alt="${displayName}" class="result-img" crossorigin="anonymous">
             <div class="result-info">
               <div class="result-name" style="color: ${isShiny ? '#d4af37' : '#000'}">${displayName}</div>
-              <div class="result-height">설정 키: ${heightCm}cm</div>
+              <div class="result-height">${t('resultHeight', { height: heightCm })}</div>
             </div>
         </div>
       `;
+      searchResults.querySelector('.result-item').addEventListener('click', () => {
+        addPokemonToMain(displayName, heightCm, imageUrl);
+      });
     } catch (error) {
-      searchResults.innerHTML = '<div class="loading-text" style="color:red;">이미지 로드 실패</div>';
+      searchResults.innerHTML = `<div class="loading-text" style="color:red;">${t('imageLoadFailed')}</div>`;
     }
   }
 
@@ -680,7 +957,7 @@
         <span class="drag-handle">≡</span>
         <img src="${imgUrl}" class="layer-img">
         <span class="layer-name">${name}</span>
-        <button class="remove-btn" title="삭제" onclick="event.stopPropagation(); removeObject('${objId}')">✕</button>
+        <button class="remove-btn" title="${t('removeTitle')}" onclick="event.stopPropagation(); removeObject('${objId}')">✕</button>
     `;
 
     list.insertBefore(item, list.firstChild);
@@ -805,7 +1082,7 @@
     canvas.discardActiveObject();
     canvas.renderAll();
     const link = document.createElement('a');
-    link.download = '포켓몬_크기비교.png';
+    link.download = t('downloadFilename');
     link.href = canvas.toDataURL({ format: 'png', multiplier: 2 });
     document.body.appendChild(link);
     link.click();
