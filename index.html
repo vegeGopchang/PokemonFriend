@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://kit.fontawesome.com/6f87584c9f.js" crossorigin="anonymous"></script>
   <style>
-    body { margin: 0; padding: 0; display: flex; height: 100vh; background-color: #e5e5e5; font-family: 'Pretendard', sans-serif; overflow: hidden; }
+    body { margin: 0; padding: 0; display: flex; height: 100vh; background-color: #e5e5e5; font-family: 'Pretendard', sans-serif; overflow: hidden; padding-top: 10px; }
 
     /* 네비게이션 탭 (아이콘 추가 & 3번 탭 삭제된 신버전) */
     .tab-nav { width: 60px; display: flex; flex-direction: column; padding-top: 20px; z-index: 10; background-color: #333; }
@@ -79,7 +79,7 @@
     .autocomplete-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 15px; transition: 0.1s; }
     .autocomplete-item:hover, .autocomplete-item.active { background: #f0fdf4; font-weight: bold; border-left: 4px solid #4CAF50; padding-left: 11px; }
 
-    /* 구버전 검색 로직용 프리뷰 박스 스타일 복구 */
+    /* 검색 로직용 프리뷰 박스 스타일 복구 */
     .search-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto; }
     .result-item { background: white; border-radius: 10px; padding: 10px; display: flex; align-items: center; cursor: pointer; border: 1px solid #ddd; transition: transform 0.1s; }
     .result-item:hover { transform: scale(1.02); border-color: #aaa; }
@@ -88,9 +88,75 @@
     .result-name { font-weight: bold; font-size: 16px; margin-bottom: 4px; }
     .result-height { font-size: 13px; color: #666; }
     .loading-text { text-align: center; grid-column: span 2; color: #888; padding: 20px; font-weight: bold; }
+    .legal-notice-bar {
+      width: 100%;
+      background-color: #333;
+      color: #ffffff;
+      font-size: 11px;
+      font-family: 'Malgun Gothic', sans-serif;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+
+      padding: 4px 15px;
+      box-sizing: border-box;
+
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+    }
+
+    .notice-content {
+      max-width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .notice-text {
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notice-text strong {
+      color: #f1c40f;
+    }
+
+    .api-link-btn {
+      background-color: #e74c3c;
+      color: white;
+      text-decoration: none;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 10px;
+      white-space: nowrap;
+      transition: background 0.2s ease-in-out;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .api-link-btn:hover {
+      background-color: #c0392b;
+    }
   </style>
 </head>
 <body>
+
+<header class="legal-notice-bar">
+  <div class="notice-content">
+    git push -u origin main     <span class="notice-text">
+            ⚠️ 본 서비스는 개인 개발 학습 목적의 <strong>비상업적 팬 페이지</strong>입니다.
+            모든 포켓몬의 이름, 이미지, 상표권은 원작자(©Pokémon, ©Nintendo, Creatures, GAME FREAK)에게 귀속됩니다.
+        </span>
+    <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer" class="api-link-btn">
+      Data Source: PokeAPI 🌐
+    </a>
+  </div>
+</header>
 
 <nav class="tab-nav">
   <button class="tab" id="tab-1" onclick="toggleSidebar('sidebar1', this)" title="포켓몬 및 레이어 관리"><i class="fa-solid fa-list"></i></button>
