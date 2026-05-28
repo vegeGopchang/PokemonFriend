@@ -103,9 +103,7 @@
 
 <header class="legal-notice-bar">
   <div class="notice-content">
-    <span class="notice-text">
-      ⚠️ 본 서비스는 개인 개발 학습 목적의 <strong>비상업적 팬 페이지</strong>입니다. 모든 포켓몬의 이름, 이미지, 상표권은 원작자(©Pokémon, ©Nintendo, Creatures, GAME FREAK)에게 귀속됩니다.
-    </span>
+    <span class="notice-text" id="legal-notice-text" data-i18n="legalNotice"></span>
     <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer" class="api-link-btn">
       Data Source: PokeAPI 🌐
     </a>
@@ -219,15 +217,18 @@
   const LANGUAGES = {
     ko: {
       htmlLang: 'ko', title: '포켓몬 크기 비교 사이트', tabLayers: '포켓몬 및 레이어 관리', tabSettings: '캐릭터 및 배경 설정', languageSelectTitle: '언어 선택', layersHeading: '포켓몬 / 레이어 관리', addPokemon: '+ 포켓몬 추가하기', layerHint: '💡 클릭: 객체 선택 / 우클릭: 좌우 반전 / 드래그: 순서 변경', characterHeading: '캐릭터 설정', characterName: '캐릭터 이름', characterNamePlaceholder: '이름 입력 (예: 내 캐릭터)', characterHeight: '캐릭터 키 (cm)', characterHeightPlaceholder: '예: 180', characterUpload: '캐릭터 일러스트 업로드', outlineHeading: '✨ 선택된 객체 외곽선', outlineHint: '포켓몬이나 캐릭터를 먼저 클릭 후 적용하세요.', outlineColorTitle: '외곽선 색상', outlineWidthTitle: '두께 조절', apply: '적용', backgroundHeading: '배경 설정', solidBackground: '단색 배경 적용', gradientBackground: '위로 그라데이션 (하단 → 상단)', gradientBottomTitle: '하단 시작 색상', gradientTopTitle: '상단 끝 색상', backgroundUpload: '배경 일러스트 파일', resetBackground: '↻ 배경 초기화', saveTitle: '고화질 저장', zoom3Title: '3배 확대', zoom2Title: '2배 확대', zoom1Title: '원래 크기', undoTitle: '실행 취소 (되돌리기)', redoTitle: '다시 실행 (앞으로 가기)', searchHeading: '포켓몬 검색', searchPlaceholder: '이름 또는 초성 입력 후 엔터 (예: ㅍ, 피카츄)', shinyLabel: '✨ 이로치(Shiny)로 불러오기', dictionaryLoading: '사전 데이터를 불러오는 중입니다... 잠시만 기다려주세요.', dictionaryFailed: '로딩 실패!', pokemonImageLoading: '포켓몬 이미지를 불러오는 중입니다...', imageLoadFailed: '이미지 로드 실패', resultHeight: '설정 키: {height}cm', removeTitle: '삭제', defaultCharacterName: '내 캐릭터', outlineAlert: '외곽선을 적용할 캐릭터나 포켓몬을 먼저 클릭해주세요!', downloadFilename: '포켓몬_크기비교.png',
-      forms: { female: ' (암컷)', alola: ' (알로라)', galar: ' (가라르)', hisui: ' (히스이)', paldea: ' (팔데아)', mega: ' (메가진화)', gmax: ' (거다이맥스)', east: ' (동해의 모습)', blue: ' (청색근의 모습)', white: ' (백색근의 모습)', unbound: ' (굴레를 벗어난 모습)', origin: ' (오리진폼)', sky: ' (스카이폼)', therian: ' (영물폼)' }
+      forms: { female: ' (암컷)', alola: ' (알로라)', galar: ' (가라르)', hisui: ' (히스이)', paldea: ' (팔데아)', mega: ' (메가진화)', gmax: ' (거다이맥스)', east: ' (동해의 모습)', blue: ' (청색근의 모습)', white: ' (백색근의 모습)', unbound: ' (굴레를 벗어난 모습)', origin: ' (오리진폼)', sky: ' (스카이폼)', therian: ' (영물폼)' },
+      legalNotice: '⚠️ 본 서비스는 개인 개발 학습 목적의 비상업적 팬 페이지입니다. 모든 포켓몬의 이름, 이미지, 상표권은 원작자(©Pokémon, ©Nintendo, Creatures, GAME FREAK)에게 귀속됩니다.'
     },
     en: {
       htmlLang: 'en', title: 'Pokemon Size Comparison', tabLayers: 'Pokemon and layer manager', tabSettings: 'Character and background settings', languageSelectTitle: 'Select language', layersHeading: 'Pokemon / Layer Manager', addPokemon: '+ Add Pokemon', layerHint: 'Tip: click to select / right-click to flip / drag to reorder', characterHeading: 'Character Settings', characterName: 'Character Name', characterNamePlaceholder: 'Enter a name (e.g. My Character)', characterHeight: 'Character Height (cm)', characterHeightPlaceholder: 'e.g. 180', characterUpload: 'Upload Character Illustration', outlineHeading: '✨ Selected Object Outline', outlineHint: 'Select a Pokemon or character first, then apply the outline.', outlineColorTitle: 'Outline color', outlineWidthTitle: 'Outline width', apply: 'Apply', backgroundHeading: 'Background Settings', solidBackground: 'Apply Solid Background', gradientBackground: 'Gradient Upward (bottom → top)', gradientBottomTitle: 'Bottom color', gradientTopTitle: 'Top color', backgroundUpload: 'Background Image File', resetBackground: '↻ Reset Background', saveTitle: 'Save high-resolution image', zoom3Title: 'Zoom to 3x', zoom2Title: 'Zoom to 2x', zoom1Title: 'Original size', undoTitle: 'Undo', redoTitle: 'Redo', searchHeading: 'Pokemon Search', searchPlaceholder: 'Type a name and press Enter (e.g. Pikachu)', shinyLabel: '✨ Load as Shiny', dictionaryLoading: 'Loading dictionary data... Please wait.', dictionaryFailed: 'Loading failed!', pokemonImageLoading: 'Loading Pokemon image...', imageLoadFailed: 'Image load failed', resultHeight: 'Height: {height}cm', removeTitle: 'Delete', defaultCharacterName: 'My Character', outlineAlert: 'Please select a character or Pokemon before applying an outline.', downloadFilename: 'pokemon_size_comparison.png',
-      forms: { female: ' (Female)', alola: ' (Alola)', galar: ' (Galar)', hisui: ' (Hisui)', paldea: ' (Paldea)', mega: ' (Mega Evolution)', gmax: ' (Gigantamax)', east: ' (East Sea Form)', blue: ' (Blue-Striped Form)', white: ' (White-Striped Form)', unbound: ' (Unbound Form)', origin: ' (Origin Form)', sky: ' (Sky Form)', therian: ' (Therian Form)' }
+      forms: { female: ' (Female)', alola: ' (Alola)', galar: ' (Galar)', hisui: ' (Hisui)', paldea: ' (Paldea)', mega: ' (Mega Evolution)', gmax: ' (Gigantamax)', east: ' (East Sea Form)', blue: ' (Blue-Striped Form)', white: ' (White-Striped Form)', unbound: ' (Unbound Form)', origin: ' (Origin Form)', sky: ' (Sky Form)', therian: ' (Therian Form)' },
+      legalNotice: '⚠️ This service is a non-commercial fan page for educational purposes. All Pokémon names, images, and trademarks belong to the original authors (©Pokémon, ©Nintendo, Creatures, GAME FREAK).'
     },
     zh: {
       htmlLang: 'zh-Hans', title: '宝可梦尺寸对比工具', tabLayers: '宝可梦与图层管理', tabSettings: '角色与背景设置', languageSelectTitle: '选择语言', layersHeading: '宝可梦 / 图层管理', addPokemon: '+ 添加宝可梦', layerHint: '提示：点击选择 / 右键水平翻转 / 拖拽调整顺序', characterHeading: '角色设置', characterName: '角色名称', characterNamePlaceholder: '输入名称（例如：我的角色）', characterHeight: '角色身高（cm）', characterHeightPlaceholder: '例如：180', characterUpload: '上传角色立绘', outlineHeading: '✨ 选中对象描边', outlineHint: '请先点击选中宝可梦或角色，再应用描边。', outlineColorTitle: '描边颜色', outlineWidthTitle: '描边粗细', apply: '应用', backgroundHeading: '背景设置', solidBackground: '应用纯色背景', gradientBackground: '向上渐变（下 → 上）', gradientBottomTitle: '底部起始颜色', gradientTopTitle: '顶部结束颜色', backgroundUpload: '背景图片文件', resetBackground: '↻ 重置背景', saveTitle: '保存高清图片', zoom3Title: '放大 3 倍', zoom2Title: '放大 2 倍', zoom1Title: '原始大小', undoTitle: '撤销', redoTitle: '重做', searchHeading: '搜索宝可梦', searchPlaceholder: '输入中文名或英文名后按回车（例如：皮卡丘 / pikachu）', shinyLabel: '✨ 载入异色（Shiny）形态', dictionaryLoading: '正在加载词典数据……请稍候。', dictionaryFailed: '加载失败！', pokemonImageLoading: '正在加载宝可梦图片……', imageLoadFailed: '图片加载失败', resultHeight: '设定身高：{height}cm', removeTitle: '删除', defaultCharacterName: '我的角色', outlineAlert: '请先点击要应用描边的角色或宝可梦！', downloadFilename: '宝可梦_尺寸对比.png',
-      forms: { female: '（雌性）', alola: '（阿罗拉）', galar: '（伽勒尔）', hisui: '（洗翠）', paldea: '（帕底亚）', mega: '（超级进化）', gmax: '（超极巨化）', east: '（东海形态）', blue: '（蓝条纹形态）', white: '（白条纹形态）', unbound: '（解放形态）', origin: '（起源形态）', sky: '（天空形态）', therian: '（灵兽形态）' }
+      forms: { female: '（雌性）', alola: '（阿罗拉）', galar: '（伽勒尔）', hisui: '（洗翠）', paldea: '（帕底亚）', mega: '（超级进化）', gmax: '（超极巨化）', east: '（东海形态）', blue: '（蓝条纹形态）', white: '（白条纹形态）', unbound: '（解放形态）', origin: '（起源形态）', sky: '（天空形态）', therian: '（灵兽形态）' },
+      legalNotice: '⚠️ 本服务是用于个人开发学习目的的非商业粉丝网页。所有宝可梦的名称、图片、商标权均归原作者（©Pokémon、©Nintendo、Creatures、GAME FREAK）所有。'
     }
   };
 
@@ -249,6 +250,17 @@
     document.querySelectorAll('.remove-btn').forEach(btn => { btn.title = t('removeTitle'); });
     const languageSelect = document.getElementById('language-select');
     if (languageSelect) languageSelect.value = currentLanguage;
+
+    const noticeEl = document.getElementById('legal-notice-text');
+    if (noticeEl) {
+      // 특정 핵심 단어에 <strong> 하이라이팅 효과를 주고 싶다면 데이터 주입 후 정규식으로 치환해 줍니다.
+      let rawText = t('legalNotice');
+      // 한국어/영어/중국어의 핵심 강조 키워드들을 strong 태그로 감싸기
+      rawText = rawText.replace('비상업적 팬 페이지', '<strong>비상업적 팬 페이지</strong>')
+                       .replace('non-commercial fan page', '<strong>non-commercial fan page</strong>')
+                       .replace('非商业粉丝网页', '<strong>非商业粉丝网页</strong>');
+      noticeEl.innerHTML = rawText;
+    }
   }
 
   function formatPokemonBaseName(name) {
